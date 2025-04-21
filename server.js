@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Builder, By, Browser } = require('selenium-webdriver')
+const gameServices = require('./utils/GameServices')
 
 const app = express()
 
@@ -50,34 +51,35 @@ app.get('/game/box-art', async (req, res) => {
     }
 })
 
+// Endpoint for caching game box art URLs
 app.put('/game/box-art/update', (req, res) => {
-
-    const fileWrite = require('fs')
-
-    const requestBody = req.body
-    const boxArtURL = requestBody.box_art_url
-    const gameTitle = requestBody.game_title
 
     
 })
 
 
 // Endpoint for retrieving game details from server
-app.get('/game/:gameType', (req, res) => {
+app.get('/game/:tableType', async (req, res) => {
 
     const queryParams = req.params
-    const gameType = queryParams.gameType
-
-    var tableName = gameType;
+    const tableName = queryParams.tableType
     
+    let results = await gameServices.retrieveGames(tableName)
+
+    res.send({"games": results})
 })
 
 // Endpoint for adding new game entries
 app.post('/game/:gameType/add', (req, res) => {    
+
+    //TODO: Create endpoint to allow adding of games to specified table
     
-    // TODO: Separate utils and successfully fetch DB items
-    require('./utils/GameServices')
-    fetchAllItems()
+    const requestBody = req.body
+    const requestParameters = req.params
+
+    let result = gameServices.addGame(gameDetails, tableName)
+
+    res.send({"result": result})
 })
 
 
