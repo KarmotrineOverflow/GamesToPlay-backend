@@ -52,53 +52,137 @@ app.get('/game/box-art', async (req, res) => {
 })
 
 // Endpoint for caching game box art URLs
-app.put('/game/box-art/update', (req, res) => {
+app.put('/game/box-art/update', async (req, res) => {
 
-    
+    try {
+
+        // To update the table item, I need to get the table type and the game id
+        const requestBody = req.body
+        const queryParams = req.query
+
+        var tableName = queryParams.table_name
+        var gameId = queryParams.game_id
+        var boxArtUrl = requestBody.box_art_url
+
+        var gameDetails = {
+            id: gameId,
+            box_art: boxArtUrl
+        }
+
+        let results = await gameServices.updateGameDetails(tableName, gameDetails)
+
+        res.send({result: results})
+    } catch (e) {
+
+        driver.close();
+        res.send({"image_url": imageUrl})  
+    }
 })
 
 
 // Endpoint for retrieving game details from server
 app.get('/game/:tableType', async (req, res) => {
+    try {
 
-    const queryParams = req.params
-    const tableName = queryParams.tableType
-    
-    let results = await gameServices.retrieveGames(tableName)
+        const queryParams = req.params
+        const tableName = queryParams.tableType
 
-    res.send({"games": results})
+        console.log(tableName)
+        
+        let results = await gameServices.retrieveGames(tableName)
+
+        console.log(results)
+
+        res.send({"games": results})
+    } catch (e) {
+
+        res.status(502)
+        res.send({"error": e.message})
+    }
 })
 
 // Endpoint for adding new game entries
 app.post('/game/:gameType/add', (req, res) => {    
+    try {
 
-    //TODO: Create endpoint to allow adding of games to specified table
-    
-    const requestBody = req.body
-    const requestParameters = req.params
+        const requestBody = req.body
+        const requestParameters = req.params
 
-    let result = gameServices.addGame(gameDetails, tableName)
+        var gameDetails = requestBody.game_details
+        var tableName = requestParameters.gameType
 
-    res.send({"result": result})
+        console.log(gameDetails)
+
+        let result = gameServices.addGame(tableName, gameDetails)
+
+        res.send({"result": result})
+    } catch (e) {
+
+        res.status(502)
+        res.send({"error": e.message})
+    }
 })
 
 
 // Endpoint for updating an existing game's details
-app.put('/game/:gameType/update', (req, res) => {
+app.put('/game/:gameType/update', async (req, res) => {
 
-    
+    try {
+
+        const requestBody = req.body
+        const requestParams = req.params
+
+        var tableName = requestParams.gameType
+        var gameDetails = requestBody.game_details
+
+        var response = gameServices.updateGameDetails(tableName, gameDetails)
+
+        res.send({"result": response})
+    } catch (e) {
+
+        res.status(502)
+        res.send({"error": e.message})
+    }
 })
 
 // Endpoint for deleting a game entry
 app.delete('/game/:gameType/delete', (req, res) => {
 
-    
+    try {
+
+        const requestBody = req.body
+        const requestParams = req.params
+
+        var tableName = requestParams.gameType
+        var gameId = requestBody.game_id
+
+        var response = gameServices.deleteGame(tableName, gameId)
+
+        res.send({"result": response})
+    } catch (e) {
+
+        res.status(502)
+        res.send({"error": e.message})
+    }
 })
 
 // Endpoint for marking 'to play' game as played and moving it over to PlayedGames table
-app.put('/game/mark-as-played', (req, res) => {
+app.put('/game/mark-as-played', async (req, res) => {
 
-    
+    try {
+
+        // Get game details
+        const requestBody = req.body
+        const gameDetails = requestBody.game_details    
+
+        // Delete game details from 'To Play' table
+        // Add game details to 'Played Games' table
+        let response = gameServices.markGameAsPlayed(gameDetails)
+    } catch (e) {
+
+        res.status(502)
+        res.send({error: e.message})
+    }
 })
 
 

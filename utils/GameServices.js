@@ -7,16 +7,53 @@ function retrieveGames(tableName) {
     return result
 }
 
-function addGame(gameDetails, tableName) {
+async function addGame(tableName, gameDetails) {
 
     let newGame = new templates.Game(gameDetails.title, gameDetails.gameDescription, gameDetails.thoughts, gameDetails.boxArt)
 
-    let result = sqlServices.addItem(newGame, tableName)
-    return result
+    try {
+
+        let result = await sqlServices.addItem(newGame, tableName)
+
+        return result
+    } catch(e) {
+
+        throw(e)
+    }
 }  
+
+async function updateGameDetails(tableName, gameDetails) {
+    try {
+
+        let result = await sqlServices.updateItem(tableName, gameDetails)
+
+        return result
+    } catch (e) {
+
+        throw e
+    }
+}
+
+async function markGameAsPlayed(gameDetails) {
+
+    try {
+
+        const gameId = gameDetails.id
+
+        await sqlServices.deleteItem("toplaygames", gameId)
+        await addGame("playedgames", gameDetails)
+
+        return "Game marked as played successfully"
+    } catch (e) {
+
+        throw e
+    }
+}
 
 module.exports = {
 
     retrieveGames,
-    addGame
+    addGame,
+    updateGameDetails,
+    markGameAsPlayed
 }

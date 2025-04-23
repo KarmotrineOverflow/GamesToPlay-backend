@@ -28,7 +28,6 @@ async function fetchAllItems(tableName) {
     
     var queryResults = await (await sqlCon).query(queryString) // Quite a doozy this line is. Two awaits?? Have to conver the SQL object to an SQL Promise object then await it?
         .then( ([rows]) => { 
-            console.log(rows)
 
             result = rows
         } )
@@ -38,13 +37,47 @@ async function fetchAllItems(tableName) {
 
 async function addItem(item, tableName) {
 
-    var queryString = `INSERT INTO ${tableName} (title, game_description, thoughts, box_art) VALUES (${tableName.title}, ${tableName.gameDescription}, ${tableName.thoughts}, ${tableName.boxArt})`
+    var queryString = `INSERT INTO ${tableName} (title, game_description, thoughts, box_art) VALUES ("${item.title}", "${item.gameDescription}", "${item.thoughts}", "${item.boxArt}")`
 
     var queryResults = await (await sqlCon).query(queryString)
-        .then( result => console.log(result))
+
+    return queryResults
+}
+
+async function updateItem(tableName, item) {
+
+    var queryCollection = []
+
+    // Iterate through item object to get keys and values, then append the formatted string to queryCollection
+    for (let [key, val] of Object.entries(item)) {
+
+        if (key != "id") {
+
+            queryCollection.push(`${key} = "${val}"`)
+        }        
+    }
+
+    var updateQuerySubstr = queryCollection.join(', ')
+    var queryString = `UPDATE ${tableName} SET ${updateQuerySubstr} WHERE id = ${item.id}`
+
+    var queryResults = await (await sqlCon).query(queryString)
+
+    return queryResults
+}
+
+async function deleteItem(tableName, itemId) {
+
+    var queryString = `DELETE FROM ${tableName} WHERE id = ${itemId}`
+
+    var queryResults = await (await sqlCon).query(queryString)
+
+    return queryResults
 }
 
 module.exports = {
 
-    fetchAllItems
+    fetchAllItems,
+    addItem,
+    updateItem,
+    deleteItem
 }
