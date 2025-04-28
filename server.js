@@ -12,11 +12,12 @@ const backendPort = process.env.BACKEND_PORT
 app.use(express.json());
 app.use(
     cors({
-        methods: ["*"],
+        methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
         origin: "http://localhost:5173",
         credentials: true
     })
 )
+
 
 /* CONVERT THIS ENDPOINT METHOD TO GET AND RETRIEVE GAME TITLE FROM QUERY PARAMETER */
 app.get('/game/box-art', async (req, res) => {
@@ -86,12 +87,8 @@ app.get('/game/:tableType', async (req, res) => {
 
         const queryParams = req.params
         const tableName = queryParams.tableType
-
-        console.log(tableName)
         
         let results = await gameServices.retrieveGames(tableName)
-
-        console.log(results)
 
         res.send({"games": results})
     } catch (e) {
@@ -110,8 +107,6 @@ app.post('/game/:gameType/add', (req, res) => {
 
         var gameDetails = requestBody.game_details
         var tableName = requestParameters.gameType
-
-        console.log(gameDetails)
 
         let result = gameServices.addGame(tableName, gameDetails)
 
@@ -135,6 +130,8 @@ app.put('/game/:gameType/update', async (req, res) => {
         var tableName = requestParams.gameType
         var gameDetails = requestBody.game_details
 
+        console.log(gameDetails)
+
         var response = gameServices.updateGameDetails(tableName, gameDetails)
 
         res.send({"result": response})
@@ -149,7 +146,6 @@ app.put('/game/:gameType/update', async (req, res) => {
 app.delete('/game/:gameType/delete', (req, res) => {
 
     try {
-
         const requestBody = req.body
         const requestParams = req.params
 
