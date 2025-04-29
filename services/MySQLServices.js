@@ -37,7 +37,7 @@ async function fetchAllItems(tableName) {
 
 async function addItem(tableName, item) {
 
-    var queryString = `INSERT INTO ${tableName} (title, game_description, thoughts, box_art) VALUES ("${item.title}", "${item.gameDescription}", "${item.thoughts}", "${item.boxArt}")`
+    var queryString = `INSERT INTO ${tableName} (title, game_description, thoughts, box_art) VALUES ("${item.title}", "${item.game_description}", "${item.thoughts}", "${item.box_art}")`
 
     var queryResults = await (await sqlCon).query(queryString)
 
