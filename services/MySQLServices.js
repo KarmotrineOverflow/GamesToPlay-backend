@@ -35,7 +35,7 @@ async function fetchAllItems(tableName) {
     return (result)
 }
 
-async function addItem(item, tableName) {
+async function addItem(tableName, item) {
 
     var queryString = `INSERT INTO ${tableName} (title, game_description, thoughts, box_art) VALUES ("${item.title}", "${item.gameDescription}", "${item.thoughts}", "${item.boxArt}")`
 

@@ -104,7 +104,7 @@ app.post('/game/:gameType/add', (req, res) => {
 
         const requestBody = req.body
         const requestParameters = req.params
-
+        
         var gameDetails = requestBody.game_details
         var tableName = requestParameters.gameType
 

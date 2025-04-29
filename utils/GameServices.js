@@ -9,11 +9,9 @@ function retrieveGames(tableName) {
 
 async function addGame(tableName, gameDetails) {
 
-    let newGame = new templates.Game(gameDetails.title, gameDetails.gameDescription, gameDetails.thoughts, gameDetails.boxArt)
-
     try {
 
-        let result = await sqlServices.addItem(newGame, tableName)
+        let result = await sqlServices.addItem(tableName, gameDetails)
 
         return result
     } catch(e) {
