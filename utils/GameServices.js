@@ -48,10 +48,25 @@ async function markGameAsPlayed(gameDetails) {
     }
 }
 
+async function deleteGame(tableName, gameId) {
+
+    try {
+
+
+        await sqlServices.deleteItem(tableName, gameId)
+
+        return "Game deleted successfully"
+    } catch (e) {
+
+        throw e
+    }
+}
+
 module.exports = {
 
     retrieveGames,
     addGame,
     updateGameDetails,
-    markGameAsPlayed
+    markGameAsPlayed,
+    deleteGame
 }

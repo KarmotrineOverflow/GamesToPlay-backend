@@ -146,11 +146,11 @@ app.put('/game/:gameType/update', async (req, res) => {
 app.delete('/game/:gameType/delete', (req, res) => {
 
     try {
-        const requestBody = req.body
+        const queryParams = req.query
         const requestParams = req.params
 
         var tableName = requestParams.gameType
-        var gameId = requestBody.game_id
+        var gameId = queryParams.game_id
 
         var response = gameServices.deleteGame(tableName, gameId)
 
